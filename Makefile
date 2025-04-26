@@ -6,7 +6,7 @@ CFLAGS = -Wall -g
 OBJ = main.o stack.o helpers.o
 
 # Executable name
-TARGET = program
+TARGET = smrepl
 
 # Default target to build the executable
 all: $(TARGET)
