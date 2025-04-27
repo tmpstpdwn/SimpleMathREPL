@@ -3,7 +3,7 @@
 #define NUMLEN 13
 #define INBUFFLEN 1000
 #define PROMPT " $ "
-#define RESPROMPT " = "
+#define RESSYM " = "
 
 // ENUMS
 enum {NONE, OP, NUM};

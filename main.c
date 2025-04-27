@@ -93,9 +93,15 @@ int main() {
 
             // set feedvar to 1 and break the loop.
             } else if (line[i] == '>') {
+                if (lastread == OP) {
+                    printf(PROMPT);
+                    printf("Error: Expected a number!\n\n");
+                    error = 1;
+                    break;
+                }
                 feedvar = 1;
-                break;
                 i++;
+                break;
 
             // read from a variable.
             } else if (islower(line[i])){
@@ -140,7 +146,7 @@ int main() {
 
         // print result if there are no errors.
         if (!error) {
-            printf(RESPROMPT);
+            printf(RESSYM);
             printf("%f\n\n", popnum());
         }
 
