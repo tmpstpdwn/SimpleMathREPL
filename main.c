@@ -2,18 +2,20 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "utils.h"
+#include "stack.h"
+#include "helpers.h"
 
 // MAIN
 int main() {
 
     // buffer for line.
-    char line[LEN];
+    char line[INBUFFLEN];
 
     // 26 [a-z] single letter variable storage for doubles.
     double vars[26] = {0};
 
     // declare variables.
-    int lastread, feedvar, len, i;
+    int lastread, brackets, feedvar, error, len, i;
 
     // title.
     printf("\n SimpleMathREPL [Ctrl+D/Z to exit]\n --------------\n\n");
@@ -22,7 +24,7 @@ int main() {
     printf(PROMPT);
     fflush(stdout);
 
-    while ((len = readline(line, LEN)) >= 0) {
+    while ((len = readline(line, INBUFFLEN)) >= 0) {
 
         // skip iteration if input is empty.
         if (!len || isfullwhitespace(line)) {
@@ -34,32 +36,59 @@ int main() {
 
         // reset variables.
         i = 0;
+        error = 0;
         feedvar = 0;
+        brackets = 0;
         lastread = NONE;
 
         // until line is finished.
         while (line[i] != '\0') {
 
             // push number.
-            if (isnumber(line, i) && lastread != NUM) {
+            if (isnumber(line, i)) {
+                if (lastread == NUM) {
+                    printf(PROMPT);
+                    printf("Error: Expected an operator!\n\n");
+                    error = 1;
+                    break;
+                }
                 pushnum(getnum(line, &i));
                 lastread = NUM;
 
             // push operator and eval previous entries based on precedence.
-            } else if (isoperator(line[i]) && lastread != OP) {
-                while (precedence(lastop()) >= precedence(line[i]) && eval());
+            } else if (isoperator(line[i])) {
+                if (lastread == OP) {
+                    printf(PROMPT);
+                    printf("Error: Expected a number!\n\n");
+                    error = 1;
+                    break;
+                }
+                while (!opstackempty() && numcount() >= 2 &&
+                        precedence(lastop()) >= precedence(line[i])) {
+                    eval();
+                }
                 pushop(line[i]);
                 lastread = OP;
                 i++;
 
             // push '('.
             } else if (line[i] == '(') {
+                brackets++;
                 pushop(line[i]);
                 i++;
 
             // eval previous entries if ')' is met.
             } else if (line[i] == ')') {
-                while (eval());
+                brackets--;
+
+                while (!opstackempty() && numcount() >= 2 && lastop() != '(') {
+                    eval();
+                }
+
+                if (lastop() != '(')
+                    break;
+
+                popop();
                 i++;
 
             // set feedvar to 1 and break the loop.
@@ -69,7 +98,13 @@ int main() {
                 i++;
 
             // read from a variable.
-            } else if (islower(line[i]) && lastread != NUM){
+            } else if (islower(line[i])){
+                if (lastread == NUM) {
+                    printf(PROMPT);
+                    printf("Error: Expected an operator!\n\n");
+                    error = 1;
+                    break;
+                }
                 pushnum(vars[line[i] - 'a']);
                 lastread = NUM;
                 i++;
@@ -80,17 +115,27 @@ int main() {
             }
         }
 
-        // eval remaining entries and print result.
-        while (eval());
-        printf(" = %f\n\n", lastnum());
+        if (brackets && !error) {
+            printf(PROMPT);
+            printf("Error: brackets not balanced!\n\n");
+            error = 1;
+        }
 
-        // feed result to a variable [a-z] if need to.
-        if (feedvar) {
-            while (line[i] != '\0' && !islower(line[i])) i++;
-            if (islower(line[i])) {
-                vars[line[i] - 'a'] = popnum();
+        // eval remaining entries and print result.
+        while (!opstackempty() && numcount() >= 2)
+            eval();
+        if (!error) {
+            printf(" = %f\n\n", lastnum());
+
+            // feed result to a variable [a-z] if need to.
+            if (feedvar) {
+                while (line[i] != '\0' && !islower(line[i])) i++;
+                if (islower(line[i])) {
+                    vars[line[i] - 'a'] = popnum();
+                }
             }
         }
+
 
         // reset both stack pointers.
         resetnumstack();

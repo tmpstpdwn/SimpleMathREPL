@@ -2,24 +2,24 @@
 #include "utils.h"
 
 // GLOBALS
-static char opstack[LEN];
+static char opstack[STACKLEN];
 static int opptr = 0;
 
-static double numstack[LEN];
+static double numstack[STACKLEN];
 static int numptr = 0;
 
 // DEF
 
 // push 'c' to opstack.
 void pushop(char c) {
-    if (opptr < LEN) {
+    if (opptr < STACKLEN) {
         opstack[opptr++] = c;
     }
 }
 
 // push 'd' to numstack.
 void pushnum(double d) {
-    if (numptr < LEN) {
+    if (numptr < STACKLEN) {
         numstack[numptr++] = d;
     }
 }
@@ -65,14 +65,7 @@ void resetopstack(void) {
 }
 
 // eval stack entries, return 1 if successfull or 0 otherwise.
-int eval(void) {
-    if (opstackempty() || numcount() < 2) {
-        return 0;
-    } else if (lastop() == '(') {
-        popop();
-        return 0;
-    }
-
+void eval(void) {
     char op = popop();
     double num1 = popnum();
     double num2 = popnum();
@@ -91,7 +84,6 @@ int eval(void) {
             pushnum(num2 / num1);
             break;
     }
-    return 1;
 }
 
 // END

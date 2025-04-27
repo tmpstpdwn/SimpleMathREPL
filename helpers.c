@@ -47,7 +47,7 @@ int precedence(char c) {
 
 // get the number at line[i] or one that starts there.
 double getnum(char *line, int *i) {
-    char num[LEN];
+    char num[NUMLEN];
     int j = 0;
     int dec = 0;
 
