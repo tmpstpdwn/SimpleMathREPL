@@ -77,7 +77,7 @@ int main() {
                 pushop(line[i]);
                 i++;
 
-            // eval previous entries if ')' is met.
+            // eval previous entries if ')' is met, till '(' or break.
             } else if (line[i] == ')') {
                 brackets--;
 
@@ -115,27 +115,34 @@ int main() {
             }
         }
 
+        // check for unbalanced brackets.
         if (brackets && !error) {
             printf(PROMPT);
-            printf("Error: brackets not balanced!\n\n");
+            printf("Error: Brackets not balanced!\n\n");
             error = 1;
         }
 
         // eval remaining entries and print result.
         while (!opstackempty() && numcount() >= 2)
             eval();
-        if (!error) {
-            printf(" = %f\n\n", lastnum());
 
-            // feed result to a variable [a-z] if need to.
-            if (feedvar) {
-                while (line[i] != '\0' && !islower(line[i])) i++;
-                if (islower(line[i])) {
-                    vars[line[i] - 'a'] = popnum();
-                }
+        // feed result to a variable [a-z] if need to.
+        if (feedvar && !error) {
+            while (line[i] != '\0' && !islower(line[i])) i++;
+            if (islower(line[i])) {
+                vars[line[i] - 'a'] = lastnum();
+            } else {
+                printf(PROMPT);
+                printf("Error: Expected a variable name [a-z]!\n\n");
+                error = 1;
             }
         }
 
+        // print result if there are no errors.
+        if (!error) {
+            printf(RESPROMPT);
+            printf("%f\n\n", popnum());
+        }
 
         // reset both stack pointers.
         resetnumstack();

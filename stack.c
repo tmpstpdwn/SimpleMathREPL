@@ -44,7 +44,7 @@ double lastnum(void) {
     return (numptr > 0)? numstack[numptr - 1]: 0;
 }
 
-// is opstack empty>
+// is opstack empty?
 int opstackempty(void) {
     return opptr == 0;
 }
@@ -64,7 +64,7 @@ void resetopstack(void) {
     opptr = 0;
 }
 
-// eval stack entries, return 1 if successfull or 0 otherwise.
+// eval stack entries.
 void eval(void) {
     char op = popop();
     double num1 = popnum();
