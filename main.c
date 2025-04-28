@@ -48,7 +48,7 @@ int main() {
             if (isnumber(line, i)) {
                 if (lastread == NUM) {
                     printf(PROMPT);
-                    printf("Error: Expected an operator!\n\n");
+                    printf("Error: Expected an operator after %f!\n\n", lastnum());
                     error = 1;
                     break;
                 }
@@ -57,9 +57,9 @@ int main() {
 
             // push operator and eval previous entries based on precedence.
             } else if (isoperator(line[i])) {
-                if (lastread == OP) {
+                if (lastread != NUM) {
                     printf(PROMPT);
-                    printf("Error: Expected a number!\n\n");
+                    printf("Error: Expected a number before \'%c\'!\n\n", line[i]);
                     error = 1;
                     break;
                 }
@@ -93,9 +93,9 @@ int main() {
 
             // set feedvar to 1 and break the loop.
             } else if (line[i] == '>') {
-                if (lastread == OP) {
+                if (lastread != NUM) {
                     printf(PROMPT);
-                    printf("Error: Expected a number!\n\n");
+                    printf("Error: Expected a valid expression / number before \'>\' operator!\n\n");
                     error = 1;
                     break;
                 }
@@ -107,7 +107,7 @@ int main() {
             } else if (islower(line[i])){
                 if (lastread == NUM) {
                     printf(PROMPT);
-                    printf("Error: Expected an operator!\n\n");
+                    printf("Error: Expected an operator before \'%c\' variable!\n\n", line[i]);
                     error = 1;
                     break;
                 }
@@ -128,15 +128,29 @@ int main() {
             error = 1;
         }
 
-        // eval remaining entries and print result.
+        // eval remaining entries.
         while (!opstackempty() && numcount() >= 2)
             eval();
+        if (!opstackempty() && !error) {
+            printf(PROMPT);
+            printf("Error: Excess operators found!\n\n");
+            error = 1;
+        }
 
         // feed result to a variable [a-z] if need to.
         if (feedvar && !error) {
             while (line[i] != '\0' && !islower(line[i])) i++;
             if (islower(line[i])) {
-                vars[line[i] - 'a'] = lastnum();
+                char var = line[i];
+                i++;
+                while (isspace(line[i]) && line[i] != '\0') i++;
+                if (line[i] != '\0') {
+                    printf(PROMPT);
+                    printf("Error: Expected a variable name [a-z]!\n\n");
+                    error = 1;
+                } else {
+                    vars[var - 'a'] = lastnum();
+                }
             } else {
                 printf(PROMPT);
                 printf("Error: Expected a variable name [a-z]!\n\n");

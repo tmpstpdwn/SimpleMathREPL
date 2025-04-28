@@ -31,7 +31,7 @@ A simple command-line math evaluator written in C. This program supports basic a
 
 3. **Variables**:
 
-    You can assign values to variables using the > symbol.
+    You can assign values to variables using the > operator.
     Variables are single letters from a to z.
 
     Example:

@@ -31,7 +31,19 @@ int isoperator(char c) {
 
 // is line[i] a number or start of a number?
 int isnumber(char *line, int i) {
-    return (isdigit(line[i]) || ((line[i] == '-' || line[i] == '.') && isdigit(line[i + 1])));
+    if (isdigit(line[i])) {
+        return 1;
+    }
+
+    if ((line[i] == '-' || line[i] == '+') && (isdigit(line[i+1]) || line[i+1] == '.')) {
+        return 1;
+    }
+
+    if (line[i] == '.' && isdigit(line[i+1])) {
+        return 1;
+    }
+
+    return 0;
 }
 
 // return precedence of 'c'.
@@ -51,9 +63,9 @@ double getnum(char *line, int *i) {
     int j = 0;
     int dec = 0;
 
-    if (line[*i] == '-') {
+    if (line[*i] == '-' || line[*i] == '+') {
         num[j++] = line[(*i)++];
-    }
+    } 
 
     if (line[*i] == '.') {
         dec = 1;
