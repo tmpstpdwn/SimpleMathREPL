@@ -1,10 +1,14 @@
 // INLCUDES
+
 #include "utils.h"
 
 // GLOBALS
+
+// stack for operators.
 static char opstack[STACKLEN];
 static int opptr = 0;
 
+// stack for numbers.
 static double numstack[STACKLEN];
 static int numptr = 0;
 

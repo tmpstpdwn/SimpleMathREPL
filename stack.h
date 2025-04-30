@@ -1,4 +1,5 @@
-// stack.c
+// STACK_C
+
 void pushop(char c);
 void pushnum(double d);
 char popop(void);

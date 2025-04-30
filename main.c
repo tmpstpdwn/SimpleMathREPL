@@ -1,4 +1,5 @@
 // INCLUDES
+
 #include <stdio.h>
 #include <ctype.h>
 #include "utils.h"
@@ -6,6 +7,7 @@
 #include "helpers.h"
 
 // MAIN
+
 int main() {
 
     // buffer for line.
@@ -108,6 +110,11 @@ int main() {
                 if (lastread == NUM) {
                     printf(PROMPT);
                     printf("Error: Expected an operator before \'%c\' variable!\n\n", line[i]);
+                    error = 1;
+                    break;
+                } else if (!isspace(line[i+1]) && line[i+1] != '\0') {
+                    printf(PROMPT);
+                    printf("Error: Invalid variable name!\n\n");
                     error = 1;
                     break;
                 }

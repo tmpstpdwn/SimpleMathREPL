@@ -1,4 +1,5 @@
-// helpers.c
+// HELPERS_C
+
 int readline(char *line, int max);
 int isfullwhitespace(char *line);
 int isoperator(char c);
