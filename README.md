@@ -49,4 +49,4 @@ A simple command-line math evaluator written in C. This program supports basic a
 
 ## LICENSE
 
-This project is licensed under [GPL V3](LICENSE).
+This project is licensed under GPL3 [LICENSE](LICENSE).
