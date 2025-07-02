@@ -8,7 +8,7 @@
 
 // ENUMS
 
-// enum to notify the lastread token type.
+// enum to denote the lastread token type.
 enum {NONE, OP, NUM};
 
 // END

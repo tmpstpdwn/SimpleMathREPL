@@ -13,7 +13,7 @@ int main() {
     // buffer for line.
     char line[INBUFFLEN];
 
-    // 26 [a-z] single letter variable storage for doubles.
+    // 26 [a-z] single letter variable storage.
     double vars[26] = {0};
 
     // declare variables.
@@ -180,7 +180,7 @@ int main() {
         fflush(stdout);
     }
 
-    // newline after exit and return 0.
+    // newlines after exit and return 0.
     printf("\n\n");
     return 0;
 }
