@@ -1,9 +1,14 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Iinclude
 
-# Object files
-OBJ = main.o stack.o helpers.o
+# Directories
+SRC_DIR = src
+OBJ_DIR = build
+
+# Source and object files
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
 # Executable name
 TARGET = smrepl
@@ -15,18 +20,11 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
 
-# Rule to compile main.c
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c
+# Rule to compile .c files into .o files in build/
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Rule to compile stack.c
-stack.o: stack.c
-	$(CC) $(CFLAGS) -c stack.c
-
-# Rule to compile helpers.c
-helpers.o: helpers.c
-	$(CC) $(CFLAGS) -c helpers.c
-
-# Clean up compiled files
+# Clean up compiled files and binary
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -rf $(OBJ_DIR) $(TARGET)

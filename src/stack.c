@@ -1,8 +1,7 @@
-// INLCUDES
+#include <stack.h>
 
-#include "utils.h"
-
-// GLOBALS
+// stack length.
+#define STACKLEN 100
 
 // stack for operators.
 static char opstack[STACKLEN];
@@ -11,8 +10,6 @@ static int opptr = 0;
 // stack for numbers.
 static double numstack[STACKLEN];
 static int numptr = 0;
-
-// DEF
 
 // push 'c' to opstack.
 void pushop(char c) {
@@ -89,5 +86,3 @@ void eval(void) {
             break;
     }
 }
-
-// END
