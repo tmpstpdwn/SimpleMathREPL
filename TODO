@@ -1,4 +1,4 @@
 TODO
 ----
 
--> '*' || '/' || '-' || '+' : is now interpretted as a number. fix it.
+-> Fix error management and recovery.

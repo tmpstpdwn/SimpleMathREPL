@@ -46,6 +46,9 @@ TokenType gettoken(char buffer[], int max) {
     }
 
     if (isoperator(c)) {
+        if (c != '+' && c != '-') {
+            return NONE;
+        }
         c = getchar();
         if (c == '.' && i < max - 1) {
             buffer[i++] = c;
@@ -74,7 +77,10 @@ TokenType gettoken(char buffer[], int max) {
     }
 
     buffer[i] = '\0';
-    return (buffer[i-1] == '.')? (lastread = NONE): (lastread = NUMBER);
+    if ((isoperator(buffer[0]) && strlen(buffer) == 1) || buffer[i-1] == '.') {
+        return (lastread = NONE);
+    }
+    return (lastread = NUMBER);
 }
 
 // is 'c' an operator?
