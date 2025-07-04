@@ -19,13 +19,11 @@ int main() {
     // Token type.
     TokenType type;
 
-    // title.
-    printf("\n SimpleMathREPL [Ctrl+D/Z to exit]\n --------------\n\n");
-
     while ((type = gettoken(buffer, INBUFFLEN)) != ENDOFFILE) {
-        if (type == NUMBER || type == OPERATOR) {
-            printf("%s\n", buffer);
+        if (type == NEWLINE) {
+            continue;
         }
+        printf("%s: %d\n", buffer, type);
     }
 
     return 0;

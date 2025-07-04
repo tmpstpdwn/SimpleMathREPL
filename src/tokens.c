@@ -1,43 +1,80 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include <stdlib.h>
 #include "tokens.h"
 
 // lastread token.
 static TokenType lastread = NONE;
 
-// Tokeniser.
-TokenType gettoken(char *buffer, int max) {
+// Tokenizer.
+TokenType gettoken(char buffer[], int max) {
     int c;
-    *buffer = '\0';
+    int i = 0;
+    int decimals = 0;
+    buffer[i] = '\0';
 
-    while (isspace(c = getchar()));
-    
+    while ((c = getchar()) == ' ' || c == '\t');
+
+    if (c == '\n') {
+        return (lastread = NEWLINE);
+    }
+
     if (c == EOF) {
         return ENDOFFILE;
     }
 
-    *buffer++ = c;
+    buffer[i++] = c;
 
-    if (!isdigit(c)) {
-        *buffer = '\0';
+    decimals = (c == '.')? 1: 0;
+
+    if (!isdigit(c) && c != '.') {
+        buffer[i] = '\0';
         if (isoperator(c)) {
-            return OPERATOR;
+            if (lastread == NUMBER) {
+                return (lastread = OPERATOR);
+            }
+        } else if (islower(c)){
+            return (lastread = VAR);
+        } else if (c == '(' || c == ')') {
+            return (lastread = BRACKET);
+        } else if (c == FEEDVAROP) {
+            return (lastread = FEEDVAR);
+        } else {
+            return (lastread = NONE);
         }
-        return NONE;
     }
 
-    for (int i = 0; isdigit(c = getchar()) && i < max - 1; i++) {
-        *buffer++ = c;
+    if (isoperator(c)) {
+        c = getchar();
+        if (c == '.' && i < max - 1) {
+            buffer[i++] = c;
+            decimals = 1;
+        } else {
+            ungetc(c, stdin);
+        }
+    }
+
+    while (isdigit(c = getchar()) && i < max - 1) {
+        buffer[i++] = c;
+    }
+
+    if (c == '.' && i < max - 1 && !decimals) {
+        buffer[i++] = c;
+    } else {
+        ungetc(c, stdin);
+    }
+
+    while (isdigit(c = getchar()) && i < max - 1) {
+        buffer[i++] = c;
     }
 
     if (c != EOF) {
         ungetc(c, stdin);
     }
 
-    *buffer = '\0';
-
-    return NUMBER;
+    buffer[i] = '\0';
+    return (buffer[i-1] == '.')? (lastread = NONE): (lastread = NUMBER);
 }
 
 // is 'c' an operator?

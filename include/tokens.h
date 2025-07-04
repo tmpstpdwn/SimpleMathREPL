@@ -1,10 +1,16 @@
 // TOKENS_H
 
+#define FEEDVAROP '>'
+
 typedef enum {
   ENDOFFILE,
+  NEWLINE,
   NONE,
   NUMBER,
-  OPERATOR
+  OPERATOR,
+  BRACKET,
+  FEEDVAR,
+  VAR
 } TokenType;
 
 TokenType gettoken(char *buffer, int max);
