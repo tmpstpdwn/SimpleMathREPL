@@ -34,6 +34,8 @@ A simple command-line math evaluator written in C. This program supports basic a
     You can assign values to variables using the > operator.
     Variables are single letters from a to z.
 
+    All 26 variables are initiated to 0.
+
     Example:
     ```bash
     $ 1 + 2 > x  # Assigns the result of the expression to variable 'x'
@@ -45,7 +47,7 @@ A simple command-line math evaluator written in C. This program supports basic a
     ```
     
 5. **Exit**:
-   To exit the program, use Ctrl+D or Ctrl+Z (depending on your operating system).
+   To exit the program, use Ctrl+D.
 
 ## LICENSE
 

@@ -4,11 +4,14 @@
 #include "tokens.h"
 #include "stack.h"
 
+// Size for each token.
 #define INBUFFLEN 100
 
+// Config appearance.
 #define PROMPT " $ "
 #define RES " = "
 
+// Main.
 int main() {
 
     // buffer for token.
@@ -18,11 +21,14 @@ int main() {
     double vars[26] = {0};
 
     // declare variables.
-    int brackets, feedvar, error;
+    int brackets = 0;
+    int feedvar = 0;
+    int var;
+    int error = 0;
 
     // Token type.
     TokenType type;
-    TokenType lasttype = NONE;
+    TokenType lastype = NONE;
 
     // title.
     printf("\n SimpleMathREPL [Ctrl+D to exit]\n --------------\n\n");
@@ -32,6 +38,14 @@ int main() {
     fflush(stdout);
 
     while ((type = gettoken(buffer, INBUFFLEN)) != ENDOFFILE) {
+
+        if (lastype == NEWLINE) {
+
+            // Reset variables.
+            brackets = 0;
+            feedvar = 0;
+            error = 0;
+        }
 
         if (type == NUMBER) {
 
@@ -49,36 +63,56 @@ int main() {
             // Push operator to opstack.
             pushop(buffer[0]);
 
-        } else if (type == BRACKET) {
+        } else if (type == LBRACKET) {
 
             // Push '(' to opstack.
-            if (buffer[0] == '(') {
-                brackets++;
-                if (lasttype == NUMBER) {
-                    pushop('*');
-                }
-                pushop(buffer[0]);
+            brackets++;
+            pushop(buffer[0]);
+
+        } else if (type == RBRACKET){
 
             // Finish calculations till '('.
-            } else {
-                brackets--;
-                while (!opstackempty() && numcount() >= 2 && lastop() != '(') {
-                    eval();
-                }
-                popop();
+            brackets--;
+            while (!opstackempty() && numcount() >= 2 && lastop() != '(') {
+                eval();
             }
+            popop();
+            
+        } else if (type == VAR) {
+
+            // Push value stored in variable.
+            pushnum(vars[buffer[0] - 'a']);
 
         } else if (type == FEEDVAR) {
 
             // Should the output be fed into a variable?
-            feedvar = 1;
+            TokenType temp;
+            if ((temp = gettoken(buffer, INBUFFLEN)) == VAR) {
+                feedvar = 1;
+                var = buffer[0] - 'a';
+            } else {
+                printf(RES);
+                printf("Error: Wrong variable assignation!\n\n");
+                error = 1;
+            }
 
-        } else if (type == VAR) {
+            if (temp != NEWLINE) {
+                skipline();
+            }
 
-            // Fetch value stored in variable.
-            pushnum(vars[buffer[0] - 'a']);
+            type = NEWLINE;
 
-        } else if (type == NEWLINE) {
+        } else if (type == NONE) {
+
+            // Error in case of un-indentified tokens.
+            printf(RES);
+            printf("Error: Invalid input!\n\n");
+            skipline();
+            error = 1;
+            type = NEWLINE;
+        }
+
+        if (type == NEWLINE) {
 
             // Are brackets balanced?
             if (brackets && !error) {
@@ -88,18 +122,27 @@ int main() {
             }
 
             // Finish remaining calculations.
-            while (!opstackempty() && numcount() >= 2)
-                eval();
+            if (!error) {
+                while (!opstackempty() && numcount() >= 2) {
+                    eval();
+                }
+                if (!opstackempty() || numcount() >= 2) {
+                    printf(RES);
+                    printf("Error: Invalid input!\n\n");
+                    error = 1;
+                }
+            }
+
+            // Feed a variable.
+            if (feedvar && !error) {
+                vars[var] = lastnum();
+            }
 
             // Print result.
             if (!error) {
                 printf(RES);
                 printf("%f\n\n", popnum());
             }
-
-            // Reset variables.
-            brackets = 0, feedvar = 0, error = 0;
-            lasttype = type;
 
             // Reset stack pointers.
             resetnumstack();
@@ -109,13 +152,10 @@ int main() {
             printf(PROMPT);
             fflush(stdout);
 
-        } else {
+        }
 
-            // Print error and exit.
-            printf(" = Error in input! ");
-            break;
-
-        } 
+        // Last token type.
+        lastype = type;
     }
 
     printf("OVER. \n\n");

@@ -8,11 +8,13 @@ typedef enum {
   NONE,
   NUMBER,
   OPERATOR,
-  BRACKET,
+  LBRACKET,
+  RBRACKET,
   FEEDVAR,
   VAR
 } TokenType;
 
+void skipline();
 TokenType gettoken(char *buffer, int max);
 int isoperator(char c);
 int precedence(char c);

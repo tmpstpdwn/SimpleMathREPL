@@ -7,6 +7,12 @@
 // lastread token.
 static TokenType lastread = NONE;
 
+// Skip the current line.
+void skipline() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 // Tokenizer.
 TokenType gettoken(char buffer[], int max) {
     int c;
@@ -31,13 +37,16 @@ TokenType gettoken(char buffer[], int max) {
     if (!isdigit(c) && c != '.') {
         buffer[i] = '\0';
         if (isoperator(c)) {
-            if (lastread == NUMBER) {
+            int isanoperator = lastread == NUMBER || lastread == VAR || lastread == RBRACKET;
+            if (isanoperator) {
                 return (lastread = OPERATOR);
             }
         } else if (islower(c)){
             return (lastread = VAR);
-        } else if (c == '(' || c == ')') {
-            return (lastread = BRACKET);
+        } else if (c == '(') {
+            return (lastread = LBRACKET);
+        } else if (c == ')') {
+            return (lastread = RBRACKET);
         } else if (c == FEEDVAROP) {
             return (lastread = FEEDVAR);
         } else {
