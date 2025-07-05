@@ -13,7 +13,7 @@ OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 # Executable name
 TARGET = smrepl
 
-# Default target to build the executable
+# Default target
 all: $(TARGET)
 
 # Rule to build the executable
