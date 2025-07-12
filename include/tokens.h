@@ -14,7 +14,7 @@ typedef enum {
   VAR
 } TokenType;
 
-void skipline();
+int skipline();
 TokenType gettoken(char *buffer, int max);
 int isoperator(char c);
 int precedence(char c);

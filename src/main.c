@@ -97,7 +97,11 @@ int main() {
             }
 
             if (temp != NEWLINE) {
-                skipline();
+                if (skipline()) {
+                    printf(RES);
+                    printf("Error: Wrong variable assignation!\n\n");
+                    error = 1;
+                }
             }
 
             type = NEWLINE;

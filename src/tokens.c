@@ -8,9 +8,14 @@
 static TokenType lastread = NONE;
 
 // Skip the current line.
-void skipline() {
+// Return 1 if non space characters are found.
+int skipline() {
     int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+    int r = 0;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        if (!isspace(c)) r = 1;
+    }
+    return r;
 }
 
 // Tokenizer.
